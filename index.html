@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="nb">
+
+<head>
+	<meta charset="utf-8">
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<link type='text/css' rel='stylesheet' href='https://fonts.googleapis.com/css?family=Lato:300,400,700'/>
+	<title>What to wear?</title>
+	<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0"/>
+
+	<link rel="apple-touch-icon" sizes="57x57" href="whatfavicon/apple-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="whatfavicon/apple-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="whatfavicon/apple-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="whatfavicon/apple-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="whatfavicon/apple-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="whatfavicon/apple-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="whatfavicon/apple-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="whatfavicon/apple-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="whatfavicon/apple-icon-180x180.png">
+	<link rel="icon" type="image/png" sizes="192x192"  href="whatfavicon/android-icon-192x192.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="whatfavicon/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="whatfavicon/favicon-96x96.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="whatfavicon/favicon-16x16.png">
+	<link rel="manifest" href="whatfavicon/manifest.json">
+	<meta name="msapplication-TileColor" content="#ffffff">
+	<meta name="msapplication-TileImage" content="whatfavicon/ms-icon-144x144.png">
+	<meta name="theme-color" content="#ffffff">
+
+</head>
+<body>
+	<div id="wrapper">
+		<div id="content">
+			<!--<input type="range" id="temp" value="0" min="-50" max="60" step="0.5" />-->
+			<div id="loadinfo">Prøver å finne ut hvor du er</div>
+			<img src='loading.gif' id="loadgif" />
+			<div id="weatherdata"></div>
+			<div id="clothes"></div>
+			<div id="warning"></div>
+		</div>
+	</div>
+
+<script type="text/javascript"> 
+
+var position,
+	temperature,
+	clear_sky,
+	name,
+	humidity,
+	windSpeed,
+	elevation,
+	radiation,
+	humidityHeat,
+	windChill,
+	sunHeat,
+	apparentTemperature;
+
+var clothesList = new Array();
+
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(pos) {
+        	$('#loadinfo').html("Sjekker været");
+        	position = pos;
+        	getWeather(0);
+        }, function(errorData) {
+    		console.log(errorData)
+        	$("#loadinfo").html("Kunne ikke finne posisjonen din. Spør meg hvorfor");
+			$("#loadgif").css("display", "none");
+        });
+    } else {
+        $("#loadinfo").html("Geolokasjon fungerer ikke med denne nettleseren");
+    }
+}
+
+function getWeather(n) {
+	$.ajax({
+		url: "get_weather_yr.php",
+		type: "GET",
+		data: { 
+			lat : position.coords.latitude, 
+			lng: position.coords.longitude
+			},
+		dataType: "json",
+		beforeSend: function() {
+			//$('#loadinfo').html("Sjekker været");
+		},
+		success: function(data) {
+			if (n > 3) {
+				$('#loadinfo').html("Kunne ikke laste værinfo. Prøv å oppdatere siden");
+			} else if (data[0] == 0) {
+				n++;
+				$('#loadinfo').html("Prøver å sjekke været en gang til (" + n + ")");
+				getWeather(n);
+			} else {
+				console.log(data);
+				temperature = Number(data[2]);
+				clear_sky = 100 - Number(data[3]);
+				name = data[4];
+				humidity = Number(data[5]);
+				windSpeed = Number(data[6]);
+				elevation = Number(data[7]);
+				radiation = 0;
+				if (elevation > 0) {
+					radiation = 114*Math.sin(toRadians(elevation))*(clear_sky/100);
+				}
+				humidityHeat = 0.348*((humidity/100)*6.105*Math.exp((17.27*temperature)/(237.7+temperature)));
+				windChill = 0.70*windSpeed;
+				sunHeat = 0.70*(radiation/(windSpeed+10));
+				apparentTemperature = temperature+humidityHeat-windChill+sunHeat-4.25;
+				
+				console.log("Name: "+name+"\nSun altitude: "+elevation+"°\nTemperature: "+temperature+"°C\nHumidity: "+humidity+"%\nWind speed: "+windSpeed+"m/s\nClear sky: "+clear_sky+"%\nApparent temperature: "+apparentTemperature.toFixed(2));
+				$('#weatherdata').html("<span style='font-size: 4em; line-height: 0.9em; font-weight: 300;'>" + apparentTemperature.toFixed(1) + "&deg;C</span><br><span style='font-size: 1em;'>FØLT TEMPERATUR</span><br><br><span style='font-size: 2em; line-height: 0.9em; font-weight: 300;'>" + temperature.toFixed(1) + "&deg;C</span><br><span style='font-size: 0.7em;'>LUFTTEMPERATUR</span>");
+				whatClothes(apparentTemperature, elevation);
+				$("#loadgif").css("display", "none");
+				$("#loadinfo").css("display", "none");
+				//http://www.bom.gov.au/info/thermal_stress/
+			}
+		},
+		error: function() {
+			if (n < 3) {
+				n++;
+				$('#loadinfo').html("Noe gikk galt, prøver en gang til... (" + n + ")");
+				getWeather(n);
+			} else {
+				$('#loadinfo').html("Kunne ikke laste værinfo");
+				$("#loadgif").css("display", "none");
+			}
+		}
+	});
+}
+
+function whatClothes(temperature, elevation) {
+	var clothes = {
+		lopejakke: {
+			range: [-100,9],
+			text: "Overtrekksjakke"
+		},
+		fleece: {
+			range: [-100,-15],
+			text: "Tynn fleecegenser"
+		},
+		tynnulltroye: {
+			range: [-7,2],
+			text: "Tynn ulltrøye"
+		},
+		tykkulltroye: {
+			range: [-100,-7],
+			text: "Tykk ulltrøye"
+		},
+		tynnsupertroye: {
+			range: [6,15],
+			text: "Tynn supertrøye"
+		},
+		tykksupertroye: {
+			range: [2,6],
+			text: "Tykk supertrøye"
+		},
+		overtrekksbukse: {
+			range: [-100,-5],
+			text: "Overtrekksbukse"
+		},
+		longs: {
+			range: [-100,-15],
+			text: "Longs"
+		},
+		tights: {
+			range: [-5,14],
+			text: "Tights"
+		},
+		hansker: {
+			range: [-100,-2],
+			text: "Hansker"
+		},
+		lue: {
+			range: [-100,-5],
+			text: "Lue"
+		},
+		panneband: {
+			range: [-5,8],
+			text: "Pannebånd"
+		},
+		buff: {
+			range: [-100,4],
+			text: "Buff"
+		},
+		shorts: {
+			range: [14,100],
+			text: "Shorts"
+		},
+		tskjorte: {
+			range: [15,20],
+			text: "T-skjorte"
+		},
+		singlett: {
+			range: [20,100],
+			text: "Singlett"
+		}
+	}
+	var html = "<h1>Antrekk</h1>";
+
+	html += "<ul>";
+	if (elevation < 0) {
+		html += "<li>Refleksvest</li>";
+	}
+	$.each(clothes, function(key, value) {
+		if (value.range[0] <= temperature && value.range[1] > temperature) {
+			html += "<li>" + value.text + "</li>";
+			clothesList.push(value.text);
+		}
+	})
+	html += "</ul>";
+
+	$('#clothes').html(html);
+
+	if (temperature > 54) {
+		$("#warning").html("<br><br>&#9888; ADVARSEL! Det er alt for varmt til å trene.");
+	} else if (temperature > 40) {
+		$("#warning").html("<br><br>&#9888; Pass på! Trening i denne temperaturen kan være farlig");
+	} else if (temperature > 32) {
+		$("#warning").html("<br><br>&#9888; Pass på! Ikke tren hardt eller lenge i denne temperaturen");
+	} else if (temperature > 27) {
+		$("#warning").html("<br><br>&#9888; Pass på! Hard trening i denne temperaturen kan være farlig");
+	} else if (temperature > -25) {
+		$("#warning").html("");
+	} else if (temperature > -40) {
+		$("#warning").html("<br><br>&#9888; Pass på! Det kan være farlig å trene hardt i denne kulden.");
+	} else {
+		$("#warning").html("<br><br>&#9888; ADVARSEL! Det er alt for kaldt til å trene.");
+	}
+}
+
+function toRadians (angle) {
+  return angle * (Math.PI / 180);
+}
+
+$(window).load(function(){
+	getLocation();
+});
+
+</script>
+</body>
+</html>
+
+<style>
+body {
+	background-color:#FFF;
+	margin: 0;
+	padding: 0;
+	font-family: 'Lato', sans-serif;
+	color:#292929;
+}
+body, html{
+  height: 100%;
+  width: 100%;
+}
+#wrapper {
+	background: linear-gradient(to top, hsl(191, 17%, 84%) 0%,hsl(0, 0%, 100%) 100%);
+	display: flex;
+	height: 100%;
+	justify-content: center;
+	align-items: center;
+}
+#content {
+	text-align: center;
+}
+
+#loadgif {
+	padding:1em; 
+	width: 2em;
+}
+#warning {
+	color: #b10000;
+    padding: 0 2em;
+}
+ul {
+	list-style-type: circle;
+	text-align: left;
+    margin: 0;
+}
+h1 {
+    margin-bottom: .2em;
+    font-size: 3em;
+    font-weight: 300;
+}
+
+</style>
