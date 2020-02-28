@@ -1,4 +1,7 @@
 import { parseStringPromise } from 'xml2js';
+import moment from 'moment';
+
+import { ISimpleCoordinates } from './getAutocompleteSuggestions';
 
 export interface IWeather {
   temperature: number;
@@ -9,21 +12,32 @@ export interface IWeather {
   symbol: number;
 }
 
-export const getWeather = async(coordinates: Coordinates): Promise<IWeather> => {
+export const getWeather = async(coordinates: ISimpleCoordinates): Promise<IWeather | null> => {
   const requestUrl = new URL('https://api.met.no/weatherapi/locationforecast/1.9/');
-  requestUrl.searchParams.append('lat', coordinates.latitude.toString());
-  requestUrl.searchParams.append('lon', coordinates.longitude.toString());
+  requestUrl.searchParams.append('lat', coordinates.lat.toString());
+  requestUrl.searchParams.append('lon', coordinates.lon.toString());
 
-  const response = await fetch(requestUrl.href);
-  const text = await response.text();
-  const result = await parseStringPromise(text);
-  console.log(result.weatherdata.product[0].time[3].location[0].symbol[0].$.number);
-  return {
-    temperature: +result.weatherdata.product[0].time[0].location[0].temperature[0].$.value,
-    cloudiness: +result.weatherdata.product[0].time[0].location[0].cloudiness[0].$.percent,
-    humidity: +result.weatherdata.product[0].time[0].location[0].humidity[0].$.value,
-    windSpeed: +result.weatherdata.product[0].time[0].location[0].windSpeed[0].$.mps,
-    precipitation: +result.weatherdata.product[0].time[3].location[0].precipitation[0].$.value,
-    symbol: parseInt(result.weatherdata.product[0].time[3].location[0].symbol[0].$.number),
-  };
+  try {
+    const response = await fetch(requestUrl.href);
+    const text = await response.text();
+    const result = await parseStringPromise(text);
+    const forecastArray = result.weatherdata.product[0].time;
+    const currentForecast = forecastArray.filter((forecast: any) => {
+      return !moment().endOf('hour').diff(moment(forecast.$.from), 'minutes');
+    }).reduce((returnArray: any, forecast: any) => {
+      return { ...forecast.location[0], ...returnArray };
+    }, {});
+
+    return {
+      temperature: +currentForecast.temperature[0].$.value,
+      cloudiness: +currentForecast.cloudiness[0].$.percent,
+      humidity: +currentForecast.humidity[0].$.value,
+      windSpeed: +currentForecast.windSpeed[0].$.mps,
+      precipitation: +currentForecast.precipitation[0].$.value,
+      symbol: parseInt(currentForecast.symbol[0].$.number),
+    };
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
 };
