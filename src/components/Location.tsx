@@ -98,7 +98,7 @@ export const Location: React.FC<ILocationProps> = (props) => {
     return (
       <>
         {parts.map((part, index) => (
-          <span key={index} style={{ fontWeight: index % 2 ? 700 : 400 }}>
+          <span key={index} style={{ fontWeight: index % 2 ? 700 : 300 }}>
             {part}
           </span>
         ))}
@@ -127,21 +127,26 @@ export const Location: React.FC<ILocationProps> = (props) => {
           label="Location"
           variant="standard"
           fullWidth
+          InputProps={{
+            ...params.InputProps,
+            startAdornment: (
+              <InputAdornment position="start">
+                <LocationOnIcon />
+              </InputAdornment>
+            ),
+          }}
         />
       )}
       getOptionLabel={(option: IAutocompleteSuggestion) => (option.locationName && option.locationName.replace(new RegExp(boldTag, 'g'), '')) || ''}
       renderOption={(option) => {
         return (
           <Grid container alignItems="center">
-            <Grid item>
-              <LocationOnIcon />
-            </Grid>
             <Grid item xs>
-              <Typography variant="h6">
+              <Typography variant="body1">
                 <Boldify string={option.locationName} />
               </Typography>
               {option.secondaryText && (
-                <Typography variant="body2" color="textSecondary">
+                <Typography variant="caption" color="textSecondary">
                   <Boldify string={option.secondaryText} />
                 </Typography>
               )}

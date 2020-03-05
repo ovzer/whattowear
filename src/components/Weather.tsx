@@ -1,4 +1,4 @@
-import { Box } from '@material-ui/core';
+import { Box, useTheme, Typography } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 
 import { getWeather, IWeather } from '../functions/getWeather';
@@ -18,6 +18,7 @@ export const Weather: React.FC<IWeatherProps> = (props) => {
   const [weather, setWeather] = useState<IWeather | undefined>();
   const [apparentTemperature, setApparentTemperature] = useState<number | undefined>();
   const [night, setNight] = useState<boolean | undefined>();
+  const theme = useTheme();
 
   useEffect(() => {
     const asyncGetWeather = async() => {
@@ -40,9 +41,16 @@ export const Weather: React.FC<IWeatherProps> = (props) => {
   }, [coordinates]);
 
   return (
-    <Box>
-      {weather && night !== undefined && <WeatherIcon symbol={weather.symbol} night={night} />}
-      {weather && apparentTemperature ? `${weather.temperature.toFixed(1)}°C (${apparentTemperature.toFixed(1)}°C)` : '-'}
+    <Box mt={2} display="flex" flexDirection="column" alignItems="center">
+      {weather && night !== undefined && <WeatherIcon symbol={weather.symbol} night={night} color={theme.palette.common.white} />}
+      {weather && apparentTemperature
+        ? (
+          <>
+            <Typography variant="h4">{`(${apparentTemperature.toFixed(1)}°C)`}</Typography>
+            <Typography color="textSecondary">{`${weather.temperature.toFixed(1)}°C`}</Typography>
+          </>
+        )
+        : <Typography variant="h4">{'-'}</Typography>}
     </Box>
   );
 };
