@@ -23,6 +23,7 @@ import {
 interface IWeatherIconProps {
   symbol: number;
   night: boolean;
+  color?: string;
 }
 
 interface ISymbolDefinition {
@@ -217,7 +218,7 @@ const symbolDefinition: ISymbolDefinition = {
 };
 
 export const WeatherIcon: React.FC<IWeatherIconProps> = (props) => {
-  const { symbol, night } = props;
+  const { symbol, night, color } = props;
 
   if (!(symbol in symbolDefinition)) {
     return null;
@@ -236,11 +237,11 @@ export const WeatherIcon: React.FC<IWeatherIconProps> = (props) => {
   return (
     <Icon
       path={icon()}
-      size={1}
+      size={4}
       horizontal
       vertical
       rotate={180}
-      color="black"
+      color={color ? color : 'inherit'}
     />
   );
 };
