@@ -2,7 +2,6 @@ import { IAutocompleteSuggestion, ISimpleCoordinates } from './getAutocompleteSu
 import { geocoderApiKey } from '../config';
 
 export const getCoordinates = async(location: IAutocompleteSuggestion): Promise<ISimpleCoordinates | null> => {
-  console.log(location);
   if (!location.locationId) return null;
 
   const apiUrl = new URL('https://geocoder.ls.hereapi.com/6.2/geocode.json');

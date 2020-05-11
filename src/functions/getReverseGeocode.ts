@@ -17,7 +17,6 @@ export const getReverseGeocode = async(coordinates: Coordinates): Promise<IAutoc
 
     const json = await response.json();
     const address = json.Response.View[0].Result[0].Location.Address;
-    console.log(address);
 
     /*   const primaryText = [
     json.address.road,
