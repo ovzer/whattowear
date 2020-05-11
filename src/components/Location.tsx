@@ -1,4 +1,4 @@
-import { InputAdornment, TextField, Grid, Typography } from '@material-ui/core';
+import { InputAdornment, TextField, Grid, Typography, PaperProps, Box, makeStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import PersonPinCircleIcon from '@material-ui/icons/PersonPinCircle';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
@@ -8,6 +8,7 @@ import { useDebounce } from '../functions/useDebounce';
 import { getAutocompleteSuggestions, IAutocompleteSuggestion } from '../functions/getAutocompleteSuggestions';
 import { getReverseGeocode } from '../functions/getReverseGeocode';
 import { getCoordinates } from '../functions/getCoordinates';
+import { CustomPaper } from '../uiComponents/CustomPaper';
 
 interface ILocationProps {
   setLocation: Function;
@@ -16,6 +17,14 @@ interface ILocationProps {
 
 const boldTag = '#';
 
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    backgroundColor:theme.palette.primary.dark,
+    borderRadius: 0,
+    boxShadow: theme.shadows[10],
+  },
+}));
+
 export const Location: React.FC<ILocationProps> = (props) => {
   const { setLocation, location } = props;
   const [userCoordinates, setUserCoordinates] = useState<Coordinates>();
@@ -23,13 +32,14 @@ export const Location: React.FC<ILocationProps> = (props) => {
   const debouncedSearchString = useDebounce(searchString, 500);
   const [options, setOptions] = useState<IAutocompleteSuggestion[]>([]);
   const [loading, setLoading] = useState(false);
+  const [focus, setFocus] = useState(false);
+  const classes = useStyles();
 
   useEffect(() => {
     const asyncGetCoordinates = async() => {
       if (location && !location.coordinates) {
         const coordinates = await getCoordinates(location);
         if (coordinates) {
-          console.log(coordinates);
           setLocation((currentLocation: IAutocompleteSuggestion) => {return ({ ...currentLocation, coordinates });});
         }
       }
@@ -108,6 +118,7 @@ export const Location: React.FC<ILocationProps> = (props) => {
 
   return (
     <Autocomplete
+      classes={{ paper: classes.paper }}
       value={location}
       options={options}
       multiple={false}
@@ -127,11 +138,13 @@ export const Location: React.FC<ILocationProps> = (props) => {
           label="Location"
           variant="standard"
           fullWidth
+          onBlur={() => setFocus(false)}
+          onFocus={() => setFocus(true)}
           InputProps={{
             ...params.InputProps,
             startAdornment: (
               <InputAdornment position="start">
-                <LocationOnIcon />
+                <LocationOnIcon color={focus ? 'primary' : 'inherit'} />
               </InputAdornment>
             ),
           }}

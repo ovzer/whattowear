@@ -8,6 +8,7 @@ import { IAutocompleteSuggestion } from '../../functions/getAutocompleteSuggesti
 
 export const CenterContent = () => {
   const [location, setLocation] = useState<IAutocompleteSuggestion | null>();
+  const [apparentTemperature, setApparentTemperature] = useState<number | undefined>();
 
   return (
     <Box p={1} display="flex" alignItems="center" flexDirection="column">
@@ -15,9 +16,13 @@ export const CenterContent = () => {
         <Location setLocation={setLocation} location={location || null} />
       </Box>
       <Box m={1}>
-        <Weather coordinates={location?.coordinates} />
+        <Weather
+          apparentTemperature={apparentTemperature}
+          setApparentTemperature={setApparentTemperature}
+          coordinates={location?.coordinates}
+        />
       </Box>
-      <Clothes />
+      <Clothes apparentTemperature={apparentTemperature} />
     </Box>
   );
 };

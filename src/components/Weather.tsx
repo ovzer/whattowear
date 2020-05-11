@@ -9,14 +9,15 @@ import { ISimpleCoordinates } from '../functions/getAutocompleteSuggestions';
 
 interface IWeatherProps {
   coordinates: ISimpleCoordinates | undefined;
+  setApparentTemperature: Function;
+  apparentTemperature: number | undefined;
 }
 
 const dayNightLimit = -10; // Sun altitude in degrees to separate day and night
 
 export const Weather: React.FC<IWeatherProps> = (props) => {
-  const { coordinates } = props;
+  const { coordinates, setApparentTemperature, apparentTemperature } = props;
   const [weather, setWeather] = useState<IWeather | undefined>();
-  const [apparentTemperature, setApparentTemperature] = useState<number | undefined>();
   const [night, setNight] = useState<boolean | undefined>();
   const theme = useTheme();
 
@@ -38,10 +39,10 @@ export const Weather: React.FC<IWeatherProps> = (props) => {
       }
     };
     asyncGetWeather();
-  }, [coordinates]);
+  }, [coordinates, setApparentTemperature]);
 
   return (
-    <Box mt={2} display="flex" flexDirection="column" alignItems="center">
+    <Box display="flex" flexDirection="column" alignItems="center">
       {weather && night !== undefined && <WeatherIcon symbol={weather.symbol} night={night} color={theme.palette.common.white} />}
       {weather && apparentTemperature
         ? (
@@ -50,7 +51,7 @@ export const Weather: React.FC<IWeatherProps> = (props) => {
             <Typography color="textSecondary">{`${weather.temperature.toFixed(1)}°C`}</Typography>
           </>
         )
-        : <Typography variant="h4">{'-'}</Typography>}
+        : <Typography variant="h4">-</Typography>}
     </Box>
   );
 };

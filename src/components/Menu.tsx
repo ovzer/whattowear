@@ -16,7 +16,7 @@ export const Menu: React.FC<IMenuProps> = (props) => {
       open={isMenuOpen}
       onClose={() => setMenuOpen(false)}
     >
-      <Box width={drawerWidth} p={1}>Hei</Box>
+      <Box width={drawerWidth} p={2}>Hei</Box>
     </Drawer>
   );
 };
