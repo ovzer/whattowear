@@ -3,8 +3,8 @@ name: Build and deploy
 on:
   push:
     branches: [ master ]
-  pull_request_review_comment:
-    branches: [ master ]
+  issue_comment:
+    types: [ created, edited ]
 
 jobs:
   build:
