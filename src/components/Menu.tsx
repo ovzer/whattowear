@@ -1,5 +1,5 @@
 import React from 'react';
-import { Drawer, Box } from '@material-ui/core';
+import { Drawer, Box, SwipeableDrawer } from '@material-ui/core';
 
 const drawerWidth = 300;
 
@@ -12,11 +12,14 @@ export const Menu: React.FC<IMenuProps> = (props) => {
   const { isMenuOpen, setMenuOpen } = props;
 
   return (
-    <Drawer
+    <SwipeableDrawer
       open={isMenuOpen}
+      disableDiscovery
+      disableSwipeToOpen={false}
+      onOpen={() => setMenuOpen(true)}
       onClose={() => setMenuOpen(false)}
     >
       <Box width={drawerWidth} p={2}>Hei</Box>
-    </Drawer>
+    </SwipeableDrawer>
   );
 };

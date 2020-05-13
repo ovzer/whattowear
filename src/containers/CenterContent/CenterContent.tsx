@@ -12,7 +12,7 @@ export const CenterContent = () => {
 
   return (
     <Box p={1} display="flex" alignItems="center" flexDirection="column">
-      <Box m={1} flex={1} maxWidth={300} width="100%">
+      <Box m={1} flex={1} maxWidth={300} width="100%" textAlign="center">
         <Location setLocation={setLocation} location={location || null} />
       </Box>
       <Box m={1}>
