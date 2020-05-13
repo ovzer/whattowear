@@ -3,7 +3,7 @@ import { Paper, PaperProps, makeStyles, fade, Box } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    padding: theme.spacing(3),
+    padding: theme.spacing(2),
     backgroundColor: fade(theme.palette.common.white, 0.03),
   },
 }));
