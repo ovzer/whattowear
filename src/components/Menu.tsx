@@ -14,8 +14,6 @@ export const Menu: React.FC<IMenuProps> = (props) => {
   return (
     <SwipeableDrawer
       open={isMenuOpen}
-      disableDiscovery
-      disableSwipeToOpen={false}
       onOpen={() => setMenuOpen(true)}
       onClose={() => setMenuOpen(false)}
     >
