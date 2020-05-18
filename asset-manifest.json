@@ -1,22 +1,22 @@
 {
   "files": {
     "main.css": "/whattowear/static/css/main.9fae6506.chunk.css",
-    "main.js": "/whattowear/static/js/main.e2c44d47.chunk.js",
-    "main.js.map": "/whattowear/static/js/main.e2c44d47.chunk.js.map",
+    "main.js": "/whattowear/static/js/main.b224cfe3.chunk.js",
+    "main.js.map": "/whattowear/static/js/main.b224cfe3.chunk.js.map",
     "runtime-main.js": "/whattowear/static/js/runtime-main.fe89a144.js",
     "runtime-main.js.map": "/whattowear/static/js/runtime-main.fe89a144.js.map",
-    "static/js/2.0bdaef57.chunk.js": "/whattowear/static/js/2.0bdaef57.chunk.js",
-    "static/js/2.0bdaef57.chunk.js.map": "/whattowear/static/js/2.0bdaef57.chunk.js.map",
+    "static/js/2.151e21c0.chunk.js": "/whattowear/static/js/2.151e21c0.chunk.js",
+    "static/js/2.151e21c0.chunk.js.map": "/whattowear/static/js/2.151e21c0.chunk.js.map",
     "index.html": "/whattowear/index.html",
-    "precache-manifest.57f1ef71353b911efcc1b11b49be9b60.js": "/whattowear/precache-manifest.57f1ef71353b911efcc1b11b49be9b60.js",
+    "precache-manifest.955239f1214fd245b9822abdd7815c66.js": "/whattowear/precache-manifest.955239f1214fd245b9822abdd7815c66.js",
     "service-worker.js": "/whattowear/service-worker.js",
     "static/css/main.9fae6506.chunk.css.map": "/whattowear/static/css/main.9fae6506.chunk.css.map",
-    "static/js/2.0bdaef57.chunk.js.LICENSE.txt": "/whattowear/static/js/2.0bdaef57.chunk.js.LICENSE.txt"
+    "static/js/2.151e21c0.chunk.js.LICENSE.txt": "/whattowear/static/js/2.151e21c0.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.fe89a144.js",
-    "static/js/2.0bdaef57.chunk.js",
+    "static/js/2.151e21c0.chunk.js",
     "static/css/main.9fae6506.chunk.css",
-    "static/js/main.e2c44d47.chunk.js"
+    "static/js/main.b224cfe3.chunk.js"
   ]
 }
