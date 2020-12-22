@@ -22,11 +22,12 @@ export const Weather: React.FC<IWeatherProps> = (props) => {
         night={sunAltitude < dayNightLimit}
         color={theme.palette.common.white}
       />
-      <Typography variant="h4">{`(${weather.apparentTemperature.toFixed(
-        1,
-      )}°C)`}
-      </Typography>
       <Typography color="textSecondary">{`${weather.temperature.toFixed(
+        1,
+      )}°C`}
+      </Typography>
+      <Typography color="textSecondary">Føles som</Typography>
+      <Typography variant="h4">{`${weather.apparentTemperature.toFixed(
         1,
       )}°C`}
       </Typography>

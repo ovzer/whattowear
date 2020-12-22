@@ -48,7 +48,6 @@ export const getAutocompleteSuggestions = async(
   apiUrl.searchParams.append('apiKey', geocoderApiKey);
   apiUrl.searchParams.append('query', searchString);
   apiUrl.searchParams.append('maxresults', '4');
-  apiUrl.searchParams.append('resultType', 'areas');
   if (boldTag) {
     apiUrl.searchParams.append('beginHighlight', boldTag);
     apiUrl.searchParams.append('endHighlight', boldTag);
