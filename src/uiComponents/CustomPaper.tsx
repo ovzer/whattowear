@@ -1,5 +1,5 @@
 import React from 'react';
-import { Paper, PaperProps, makeStyles, fade, Box } from '@material-ui/core';
+import { Paper, PaperProps, makeStyles, fade } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   paper: {

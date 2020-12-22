@@ -17,10 +17,19 @@ export const Weather: React.FC<IWeatherProps> = (props) => {
 
   return (
     <Box display="flex" flexDirection="column" alignItems="center">
-      <WeatherIcon symbol={weather.symbol} night={sunAltitude < dayNightLimit} color={theme.palette.common.white} />
-      <Typography variant="h4">{`(${weather.apparentTemperature.toFixed(1)}°C)`}</Typography>
-      <Typography color="textSecondary">{`${weather.temperature.toFixed(1)}°C`}</Typography>
+      <WeatherIcon
+        symbol={weather.symbol}
+        night={sunAltitude < dayNightLimit}
+        color={theme.palette.common.white}
+      />
+      <Typography variant="h4">{`(${weather.apparentTemperature.toFixed(
+        1,
+      )}°C)`}
+      </Typography>
+      <Typography color="textSecondary">{`${weather.temperature.toFixed(
+        1,
+      )}°C`}
+      </Typography>
     </Box>
   );
 };
-

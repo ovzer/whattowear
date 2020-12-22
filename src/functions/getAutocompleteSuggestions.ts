@@ -30,19 +30,25 @@ const makeDisplayName = (address: IAddress, number: number): string => {
     address.state,
     address.country,
   ];
-  return primaryText.filter((str) => str).slice(0, number).join(', ');
+  return primaryText
+    .filter((str) => str)
+    .slice(0, number)
+    .join(', ');
 };
 
-export const getAutocompleteSuggestions = async(searchString: string, coordinates?: Coordinates, boldTag?: string): Promise<IAutocompleteSuggestion[]> => {
+export const getAutocompleteSuggestions = async(
+  searchString: string,
+  boldTag?: string,
+): Promise<IAutocompleteSuggestion[]> => {
   if (searchString === '') return [];
 
-  const apiUrl = new URL('https://autocomplete.geocoder.ls.hereapi.com/6.2/suggest.json');
+  const apiUrl = new URL(
+    'https://autocomplete.geocoder.ls.hereapi.com/6.2/suggest.json',
+  );
   apiUrl.searchParams.append('apiKey', geocoderApiKey);
   apiUrl.searchParams.append('query', searchString);
-  if (coordinates) {
-    apiUrl.searchParams.append('prox', `${coordinates.latitude},${coordinates.longitude},1000`);
-  }
   apiUrl.searchParams.append('maxresults', '4');
+  apiUrl.searchParams.append('resultType', 'areas');
   if (boldTag) {
     apiUrl.searchParams.append('beginHighlight', boldTag);
     apiUrl.searchParams.append('endHighlight', boldTag);

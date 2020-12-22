@@ -15,8 +15,12 @@ export interface IWeather {
   symbol: number;
 }
 
-export const getWeather = async(coordinates: ISimpleCoordinates): Promise<IWeather | null> => {
-  const requestUrl = new URL('https://api.met.no/weatherapi/locationforecast/1.9/');
+export const getWeather = async(
+  coordinates: ISimpleCoordinates,
+): Promise<IWeather | null> => {
+  const requestUrl = new URL(
+    'https://api.met.no/weatherapi/locationforecast/1.9/',
+  );
   requestUrl.searchParams.append('lat', coordinates.lat.toString());
   requestUrl.searchParams.append('lon', coordinates.lon.toString());
 
@@ -26,11 +30,13 @@ export const getWeather = async(coordinates: ISimpleCoordinates): Promise<IWeath
     const result = await parseStringPromise(text);
     const forecastArray = result.weatherdata.product[0].time;
     const sunAltitude = getSunAltitude(coordinates);
-    const currentForecast = forecastArray.filter((forecast: any) => {
-      return !moment().endOf('hour').diff(moment(forecast.$.from), 'minutes');
-    }).reduce((returnArray: any, forecast: any) => {
-      return { ...forecast.location[0], ...returnArray };
-    }, {});
+    const currentForecast = forecastArray
+      .filter((forecast: any) => {
+        return !moment().endOf('hour').diff(moment(forecast.$.from), 'minutes');
+      })
+      .reduce((returnArray: any, forecast: any) => {
+        return { ...forecast.location[0], ...returnArray };
+      }, {});
 
     const weather: IWeather = {
       temperature: +currentForecast.temperature[0].$.value,

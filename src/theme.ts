@@ -2,7 +2,8 @@ import { createMuiTheme } from '@material-ui/core/styles';
 
 export const theme = createMuiTheme({
   typography: {
-    fontFamily: 'system,-apple-system,".SFNSText-Regular","San Francisco",Roboto,"Segoe UI","Helvetica Neue","Lucida Grande",sans-serif',
+    fontFamily:
+      'system,-apple-system,".SFNSText-Regular","San Francisco",Roboto,"Segoe UI","Helvetica Neue","Lucida Grande",sans-serif',
     fontSize: 16,
     fontWeightBold: 900,
     fontWeightMedium: 700,
@@ -11,7 +12,7 @@ export const theme = createMuiTheme({
     body1: {
       letterSpacing: 2,
       fontStyle: 'italic',
-      fontVariant:'small-caps',
+      fontVariant: 'small-caps',
     },
   },
   palette: {

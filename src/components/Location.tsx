@@ -1,15 +1,26 @@
-import { InputAdornment, TextField, Grid, Typography, PaperProps, Box, makeStyles, Button, Tooltip } from '@material-ui/core';
+import {
+  InputAdornment,
+  TextField,
+  Grid,
+  Typography,
+  Box,
+  makeStyles,
+  Button,
+  Tooltip,
+  LinearProgress,
+} from '@material-ui/core';
 import React, { useEffect, useState, useCallback } from 'react';
-import PersonPinCircleIcon from '@material-ui/icons/PersonPinCircle';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import useNavigatorPermissions from 'react-use-navigator-permissions';
 
 import { useDebounce } from '../functions/useDebounce';
-import { getAutocompleteSuggestions, IAutocompleteSuggestion } from '../functions/getAutocompleteSuggestions';
+import {
+  getAutocompleteSuggestions,
+  IAutocompleteSuggestion,
+} from '../functions/getAutocompleteSuggestions';
 import { getReverseGeocode } from '../functions/getReverseGeocode';
 import { getCoordinates } from '../functions/getCoordinates';
-import { CustomPaper } from '../uiComponents/CustomPaper';
 
 interface ILocationProps {
   setLocation: Function;
@@ -20,9 +31,13 @@ const boldTag = '#';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    backgroundColor:theme.palette.primary.dark,
+    backgroundColor: theme.palette.primary.dark,
     borderRadius: 0,
     boxShadow: theme.shadows[10],
+  },
+  inputSelected: {
+    color: theme.palette.primary.main,
+    transition: theme.transitions.create(['color'], { duration: theme.transitions.duration.complex }),
   },
 }));
 
@@ -42,7 +57,9 @@ export const Location: React.FC<ILocationProps> = (props) => {
       if (location && !location.coordinates) {
         const coordinates = await getCoordinates(location);
         if (coordinates) {
-          setLocation((currentLocation: IAutocompleteSuggestion) => {return ({ ...currentLocation, coordinates });});
+          setLocation((currentLocation: IAutocompleteSuggestion) => {
+            return { ...currentLocation, coordinates };
+          });
         }
       }
     };
@@ -86,15 +103,21 @@ export const Location: React.FC<ILocationProps> = (props) => {
     } else {
       const asyncAutocompleteSuggestions = async() => {
         setLoading(true);
-        const autocompleteSuggestions = await getAutocompleteSuggestions(debouncedSearchString, userCoordinates, boldTag);
+        const autocompleteSuggestions = await getAutocompleteSuggestions(
+          debouncedSearchString,
+          boldTag,
+        );
         setOptions(autocompleteSuggestions);
         setLoading(false);
       };
       asyncAutocompleteSuggestions();
     }
-  }, [debouncedSearchString, userCoordinates]);
+  }, [debouncedSearchString]);
 
-  const onSelect = (event: React.ChangeEvent<{}>, value: IAutocompleteSuggestion | null) => {
+  const onSelect = (
+    event: React.ChangeEvent<{}>,
+    value: IAutocompleteSuggestion | null,
+  ) => {
     if (value !== null) {
       setLocation(value);
     } else {
@@ -102,7 +125,11 @@ export const Location: React.FC<ILocationProps> = (props) => {
     }
   };
 
-  const onType = (event: React.ChangeEvent<{}>, value: string, reason: string) => {
+  const onType = (
+    event: React.ChangeEvent<{}>,
+    value: string,
+    reason: string,
+  ) => {
     if (value !== null && reason === 'input') {
       setSearchString(value);
     } else {
@@ -110,7 +137,7 @@ export const Location: React.FC<ILocationProps> = (props) => {
     }
   };
 
-  const Boldify: React.FC<{string: string}> = (props) => {
+  const Boldify: React.FC<{ string: string }> = (props) => {
     const { string } = props;
     const parts = string.split(boldTag);
 
@@ -127,24 +154,32 @@ export const Location: React.FC<ILocationProps> = (props) => {
 
   return (
     <>
-      {status !== 'denied' &&
-        !userCoordinates &&
-        (
-          <Box mb={1}>
-            <Button variant="outlined" onClick={getLocation}>Finn posisjonen min</Button>
-          </Box>
-        )}
-      <Tooltip title={status === 'denied' ? 'For å hente posisjonen automatisk må du fjerne blokkeringen av posisjonsdeling i nettleseren din' : ''}>
+      {status !== 'denied' && !userCoordinates && (
+        <Box mb={1}>
+          <Button variant="outlined" onClick={getLocation}>
+            Finn posisjonen min
+          </Button>
+        </Box>
+      )}
+      <Tooltip
+        title={
+          status === 'denied'
+            ? 'For å hente posisjonen automatisk må du fjerne blokkeringen av posisjonsdeling i nettleseren din'
+            : ''
+        }
+      >
         <Autocomplete
           classes={{ paper: classes.paper }}
           value={location}
           options={options}
           multiple={false}
           loading={loading}
+          loadingText={<LinearProgress />}
           includeInputInList
           filterOptions={(x) => x}
           onChange={onSelect}
           onInputChange={onType}
+          blurOnSelect
           noOptionsText=""
           popupIcon={null}
           disableClearable
@@ -153,13 +188,14 @@ export const Location: React.FC<ILocationProps> = (props) => {
           renderInput={(params) => (
             <TextField
               {...params}
-              label="Location"
+              label="Sted"
               variant="standard"
               fullWidth
               onBlur={() => setFocus(false)}
               onFocus={() => setFocus(true)}
               InputProps={{
                 ...params.InputProps,
+                className: focus ? classes.inputSelected : '',
                 startAdornment: (
                   <InputAdornment position="start">
                     <LocationOnIcon color={focus ? 'primary' : 'inherit'} />
@@ -168,7 +204,11 @@ export const Location: React.FC<ILocationProps> = (props) => {
               }}
             />
           )}
-          getOptionLabel={(option: IAutocompleteSuggestion) => (option.locationName && option.locationName.replace(new RegExp(boldTag, 'g'), '')) || ''}
+          getOptionLabel={(option: IAutocompleteSuggestion) =>
+            (option.locationName &&
+              option.locationName.replace(new RegExp(boldTag, 'g'), '')) ||
+            ''
+          }
           renderOption={(option) => {
             return (
               <Grid container alignItems="center">
@@ -190,4 +230,3 @@ export const Location: React.FC<ILocationProps> = (props) => {
     </>
   );
 };
-

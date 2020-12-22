@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Box, Fade } from '@material-ui/core';
 
@@ -53,10 +52,7 @@ export const AsyncContent: React.FC<IAsyncContent> = (props) => {
         {awaitedWeather && (
           <>
             <Box m={1}>
-              <Weather
-                sunAltitude={sunAltitude}
-                weather={awaitedWeather}
-              />
+              <Weather sunAltitude={sunAltitude} weather={awaitedWeather} />
             </Box>
             <Clothes apparentTemperature={awaitedWeather.apparentTemperature} />
           </>
